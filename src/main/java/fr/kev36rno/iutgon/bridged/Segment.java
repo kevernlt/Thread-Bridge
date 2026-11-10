@@ -28,8 +28,7 @@ public class Segment {
         this.vehicleOccupyingSegment = vehicleOccupyingSegment;
     }
 
-    @Override
-    public String toString() {
-        return "Segment " + segmentId + " [" + way + "] : " + (vehicleOccupyingSegment != null ? vehicleOccupyingSegment.getClass().getSimpleName() : "LIBRE");
+    public String getStatusMessage() {
+        return this.vehicleOccupyingSegment == null ? "  FREE  " : "OCCUPIED";
     }
 }

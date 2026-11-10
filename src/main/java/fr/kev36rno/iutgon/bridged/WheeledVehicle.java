@@ -1,7 +1,10 @@
 package fr.kev36rno.iutgon.bridged;
 
+import fr.kev36rno.iutgon.bridged.bridge.Bridge;
 import fr.kev36rno.iutgon.bridged.enums.Way;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle> {
@@ -31,21 +34,23 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
             bridge.waitForEntry(this);
 
             List<Segment> path = bridge.getSegmentsForWay(getWay());
-            Segment currentSegment = null;
+            Deque<Segment> occupied = new ArrayDeque<>();
 
             for (Segment nextSegment : path) {
                 bridge.enterSegment(this, nextSegment);
+                occupied.addLast(nextSegment);
 
-                if (currentSegment != null) {
-                    bridge.leaveSegment(this, currentSegment);
+                if(occupied.size() > this.getSize()) {
+                    Segment segmentToLeave = occupied.removeFirst();
+                    bridge.leaveSegment(this, segmentToLeave);
                 }
-                currentSegment = nextSegment;
 
                 Thread.sleep(1000);
             }
 
-            if (currentSegment != null) {
-                bridge.leaveSegment(this, currentSegment);
+            while (!occupied.isEmpty()) {
+                Segment segmentToLeave = occupied.removeFirst();
+                bridge.leaveSegment(this, segmentToLeave);
             }
 
         } catch (InterruptedException e) {
