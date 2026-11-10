@@ -22,7 +22,11 @@ public class Bridge {
         System.out.println("Current bridge state: " + currentState);
         System.out.println("Segments:");
         for (Segment segment : segments) {
-            System.out.println(segment);
+            System.out.println("  -> " + segment);
+        }
+        System.out.println("Vehicles at bridge entry:");
+        for (Map.Entry<Way, PriorityQueue<Vehicle>> entry : vehicleAtBridgeEntry.entrySet()) {
+            System.out.println("  -> " + entry.getKey() + ": " + entry.getValue());
         }
         System.out.println("-----------------------------------");
     }
@@ -48,7 +52,21 @@ public class Bridge {
         vehicleAtBridgeEntry.computeIfAbsent(vehicle.getWay(), k -> new PriorityQueue<>()).add(vehicle);
     }
 
-    public void processSegments() {
+    public synchronized void enterSegment(WheeledVehicle vehicle, Segment nextSegment) throws InterruptedException {
+        while (nextSegment.getVehicleOccupyingSegment() != null || currentState != BridgeState.CLOSED) {
+            wait();
+        }
+        nextSegment.setVehicleOccupyingSegment(vehicle);
+    }
 
+    public synchronized void leaveSegment(WheeledVehicle vehicle, Segment segment) {
+        if (segment != null && segment.getVehicleOccupyingSegment() == vehicle) {
+            segment.setVehicleOccupyingSegment(null);
+            notifyAll();
+        }
+    }
+
+    public List<Segment> getSegmentsForWay(Way way) {
+        return segments.stream().filter(segment -> segment.getWay() == way).toList();
     }
 }

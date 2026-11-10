@@ -1,11 +1,12 @@
 package fr.kev36rno.iutgon.bridged.objects;
 
+import fr.kev36rno.iutgon.bridged.Bridge;
 import fr.kev36rno.iutgon.bridged.WheeledVehicle;
 import fr.kev36rno.iutgon.bridged.enums.Way;
 
 public class ExceptionalLoad extends WheeledVehicle {
-    public ExceptionalLoad(Way way) {
-        super(way);
+    public ExceptionalLoad(Way way, Bridge bridge) {
+        super(way, bridge);
     }
 
     @Override

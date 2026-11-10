@@ -18,7 +18,7 @@ public class OrchestatorThread extends Thread {
 
             switch (currentState) {
                 case PROCESS_SEGMENTS:
-                    bridge.processSegments();
+//                    bridge.processSegments();
                     break;
             }
 
@@ -65,7 +65,7 @@ public class OrchestatorThread extends Thread {
         Segment segment_dg_5 = new Segment(10, Way.CAR_RIGHT_TO_LEFT);
         bridge.addSegment(segment_dg_1, segment_dg_2, segment_dg_3, segment_dg_4, segment_dg_5);
 
-        Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT);
+        Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
 
         bridge.addVehicle(car1);
 
