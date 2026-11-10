@@ -28,6 +28,8 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
     @Override
     public void run() {
         try {
+            bridge.waitForEntry(this);
+
             List<Segment> path = bridge.getSegmentsForWay(getWay());
             Segment currentSegment = null;
 

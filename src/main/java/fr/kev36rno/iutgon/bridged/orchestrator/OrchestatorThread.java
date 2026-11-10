@@ -25,7 +25,7 @@ public class OrchestatorThread extends Thread {
             currentState = currentState.getNextPhase();
             bridge.printCurrentState();
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

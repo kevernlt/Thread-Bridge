@@ -30,9 +30,6 @@ public class Segment {
 
     @Override
     public String toString() {
-        return "Segment{" +
-                "segmentId=" + segmentId +
-                ", way=" + way +
-                '}';
+        return "Segment " + segmentId + " [" + way + "] : " + (vehicleOccupyingSegment != null ? vehicleOccupyingSegment.getClass().getSimpleName() : "LIBRE");
     }
 }

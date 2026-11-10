@@ -50,6 +50,7 @@ public class Bridge {
 
     public void addVehicle(Vehicle vehicle) {
         vehicleAtBridgeEntry.computeIfAbsent(vehicle.getWay(), k -> new PriorityQueue<>()).add(vehicle);
+        vehicle.start();
     }
 
     public synchronized void enterSegment(WheeledVehicle vehicle, Segment nextSegment) throws InterruptedException {
@@ -68,5 +69,16 @@ public class Bridge {
 
     public List<Segment> getSegmentsForWay(Way way) {
         return segments.stream().filter(segment -> segment.getWay() == way).toList();
+    }
+
+    public synchronized void waitForEntry(WheeledVehicle vehicle) throws InterruptedException {
+        PriorityQueue<Vehicle> queue = vehicleAtBridgeEntry.get(vehicle.getWay());
+        Segment firstSegment = getSegmentsForWay(vehicle.getWay()).getFirst();
+
+        while (queue.peek() != vehicle || firstSegment.getVehicleOccupyingSegment() != null || currentState != BridgeState.CLOSED) {
+            wait();
+        }
+
+        queue.poll();
     }
 }
