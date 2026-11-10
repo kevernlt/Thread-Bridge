@@ -24,7 +24,30 @@ public class BridgePrinter {
         int totalSegments = bridge.getSegmentsForWay(Way.CAR_LEFT_TO_RIGHT).size();
         for (Segment segment : bridge.getSegmentsForWay(Way.CAR_LEFT_TO_RIGHT)) {
             Segment oppositeSegment = bridge.getSegmentsForWay(segment.getWay().getOppositeWay()).get(totalSegments - segment.getSegmentId());
-            System.out.println("  -> " + segment.getSegmentId() + " [" + segment.getStatusMessage() + "]        " + oppositeSegment.getSegmentId() + "  [" + oppositeSegment.getStatusMessage() + "]");
+
+            //pa bo
+            String firstColor = resetColor();
+            String secondColor = resetColor();
+            if(segment.getVehicleOccupyingSegment() != null)
+                firstColor = getRandomAnsiColorCodeFromStrings(String.valueOf(segment.getVehicleOccupyingSegment().hashCode()));
+            if(oppositeSegment.getVehicleOccupyingSegment() != null)
+                secondColor = getRandomAnsiColorCodeFromStrings(String.valueOf(oppositeSegment.getVehicleOccupyingSegment().hashCode()));
+
+            System.out.println("  -> " +
+                    segment.getSegmentId() +
+                    firstColor +
+                    " ["
+                    + segment.getStatusMessage() +
+                    "]        " +
+
+                    resetColor() +
+                    oppositeSegment.getSegmentId() +
+                    secondColor +
+                    "  ["
+                    + oppositeSegment.getStatusMessage() +
+                    "]" +
+                    resetColor()
+            );
         }
         System.out.println("Vehicles at bridge entry:");
         for (Map.Entry<Way, PriorityQueue<Vehicle>> entry : bridge.getVehicleAtBridgeEntry().entrySet()) {
@@ -36,5 +59,14 @@ public class BridgePrinter {
     public void clearOutput() {
         System.out.println("\033[2J");
         System.out.flush();
+    }
+
+
+    String resetColor() {
+        return "\u001B[0m";
+    }
+
+    String getRandomAnsiColorCodeFromStrings(String seed) {
+        return "\033[38;5;" + (seed.hashCode() % 200) + "m";
     }
 }

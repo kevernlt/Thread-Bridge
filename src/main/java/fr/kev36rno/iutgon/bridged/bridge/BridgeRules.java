@@ -34,12 +34,11 @@ public class BridgeRules {
         return true;
     }
 
-
-
-    public synchronized boolean hasExceptionalLoadWaitingAtEntry(Way oppositeWay) {
+    public synchronized boolean hasBlockingVehicleAtEntry(Way oppositeWay) {
         PriorityQueue<Vehicle> queue = bridge.getVehicleAtBridgeEntry().get(oppositeWay);
         if (queue == null || queue.isEmpty()) return false;
         Vehicle head = queue.peek();
         return head instanceof WheeledVehicle wheeled && wheeled.isBlockingOtherWay();
     }
+
 }

@@ -31,4 +31,9 @@ public class Segment {
     public String getStatusMessage() {
         return this.vehicleOccupyingSegment == null ? "  FREE  " : "OCCUPIED";
     }
+
+    @Override
+    public int hashCode() {
+        return segmentId + way.ordinal();
+    }
 }

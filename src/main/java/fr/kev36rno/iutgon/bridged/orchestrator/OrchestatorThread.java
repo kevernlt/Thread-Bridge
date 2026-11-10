@@ -66,8 +66,18 @@ public class OrchestatorThread extends Thread {
         Segment segment_dg_5 = new Segment(5, Way.CAR_RIGHT_TO_LEFT);
         bridge.addSegment(segment_dg_1, segment_dg_2, segment_dg_3, segment_dg_4, segment_dg_5);
 
+        /**
+         * Pour la démo
+         *
+         * En premier : un cametar suivi d'une voiture
+         * puis en face : une voiture toute seul
+         */
+
         ExceptionalLoad exceptionalLoad1 = new ExceptionalLoad(Way.CAR_RIGHT_TO_LEFT, bridge);
         bridge.addVehicle(exceptionalLoad1);
+
+        Car car2 = new Car(Way.CAR_RIGHT_TO_LEFT, bridge);
+        bridge.addVehicle(car2);
 
         Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(car1);

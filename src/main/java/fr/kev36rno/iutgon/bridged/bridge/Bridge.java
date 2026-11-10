@@ -58,8 +58,13 @@ public class Bridge {
             segment.setVehicleOccupyingSegment(null);
 
             // If i'm the blocking another vehicle, i can leave the bridge
-            if(vehicle.equals(activeBlockingVehicle) && this.bridgeRules.isWayCompletelyClear(vehicle.getWay())) {
-                activeBlockingVehicle = null;
+            if (vehicle.equals(activeBlockingVehicle)) {
+                boolean convoiStillOnBridge = getSegmentsForWay(vehicle.getWay()).stream()
+                        .anyMatch(s -> s.getVehicleOccupyingSegment() == vehicle);
+
+                if (!convoiStillOnBridge) {
+                    activeBlockingVehicle = null;
+                }
             }
             notifyAll();
         }
@@ -93,7 +98,7 @@ public class Bridge {
 
         queue.poll();
 
-        if(vehicle.isBlockingOtherWay()) {
+        if (vehicle.isBlockingOtherWay()) {
             activeBlockingVehicle = vehicle;
         }
     }
@@ -111,7 +116,9 @@ public class Bridge {
         // If another blocking vehicle is already on the bridge (and i'm not blocking myself (cars, trucks))
         assert vehicle != null;
         if (!vehicle.isBlockingOtherWay()) {
-            if (this.bridgeRules.hasExceptionalLoadWaitingAtEntry(oppositeWay) || this.activeBlockingVehicle != null) {
+            boolean convoiApproachingOrCrossingOpposite = this.bridgeRules.hasBlockingVehicleAtEntry(oppositeWay) || (this.activeBlockingVehicle != null && this.activeBlockingVehicle.getWay() == oppositeWay);
+
+            if (convoiApproachingOrCrossingOpposite) {
                 return true;
             }
         }
