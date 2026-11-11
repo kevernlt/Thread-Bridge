@@ -5,6 +5,7 @@ import fr.kev36rno.iutgon.bridged.Segment;
 import fr.kev36rno.iutgon.bridged.enums.OrchestratorPhase;
 import fr.kev36rno.iutgon.bridged.enums.Way;
 import fr.kev36rno.iutgon.bridged.objects.Car;
+import fr.kev36rno.iutgon.bridged.objects.EmergencyCar;
 import fr.kev36rno.iutgon.bridged.objects.ExceptionalLoad;
 import fr.kev36rno.iutgon.bridged.objects.Truck;
 
@@ -77,6 +78,9 @@ public class OrchestatorThread extends Thread {
         Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(car1);
 
+        EmergencyCar emergencyCar = new EmergencyCar(Way.CAR_RIGHT_TO_LEFT, bridge);
+        bridge.addVehicle(emergencyCar);
+
         CarAdder carAdder = new CarAdder(bridge);
         carAdder.start();
     }
@@ -92,10 +96,13 @@ public class OrchestatorThread extends Thread {
         public void run() {
             for (int i = 0; i < 20; i++) {
                 try {
-                    Thread.sleep(1000);
-
+                    Thread.sleep(4000 + Math.max(1, (int) (Math.random() * 1000)));
                     Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
                     bridge.addVehicle(car1);
+                    if( i == 4) {
+                        EmergencyCar emergencyCar = new EmergencyCar(Way.CAR_LEFT_TO_RIGHT, bridge);
+                        bridge.addVehicle(emergencyCar);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

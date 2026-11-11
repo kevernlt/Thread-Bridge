@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle> {
-    private Bridge bridge;
+public class WheeledVehicle extends Vehicle {
+    private final Bridge bridge;
 
     private final Deque<Segment> occupied = new ArrayDeque<>();
+
+    private boolean onEmergencyLane = false;
+    private List<Segment> resumeSegments = new ArrayList<>();
 
     // size in platforms: in consignee it say "un camion fait 2 platforme" and "une voiture fait une platforme"
     public WheeledVehicle(Way way, Bridge bridge) {
@@ -29,6 +32,30 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
 
     public boolean isEmergencyVehicle() {
         return false;
+    }
+
+    public synchronized boolean isOnEmergencyLane() {
+        return onEmergencyLane;
+    }
+
+    public synchronized void setOnEmergencyLane(boolean onEmergencyLane) {
+        this.onEmergencyLane = onEmergencyLane;
+    }
+
+    public synchronized List<Segment> getResumeSegments() {
+        return new ArrayList<>(resumeSegments);
+    }
+
+    public synchronized void setResumeSegments(List<Segment> resumeSegments) {
+        this.resumeSegments = new ArrayList<>(resumeSegments);
+    }
+
+    public synchronized List<Segment> getOccupiedSegments() {
+        return new ArrayList<>(occupied);
+    }
+
+    public Bridge getBridge() {
+        return bridge;
     }
 
     @Override
@@ -87,16 +114,22 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
 
     @Override
     public String toString() {
-        return "WheeledVehicle{" +
+        return getClass().getSimpleName() + "{" +
                 "way=" + getWay() +
                 ", size=" + getSize() +
                 ", isBlockingOtherWay=" + isBlockingOtherWay() +
-                ", isEmergencyVehicle=" + isEmergencyVehicle() +
+                ", isEmergency=" + isEmergencyVehicle() +
+                (onEmergencyLane ? ", onUrgLane=true" : "") +
                 '}';
     }
 
     @Override
-    public int compareTo(WheeledVehicle o) {
-        return isEmergencyVehicle() ? -1 : o.isEmergencyVehicle() ? 1 : 0;
+    public int compareTo(Vehicle o) {
+        if (o instanceof WheeledVehicle wv) {
+            if (this.isEmergencyVehicle() != wv.isEmergencyVehicle()) {
+                return this.isEmergencyVehicle() ? -1 : 1;
+            }
+        }
+        return 0;
     }
 }

@@ -13,7 +13,7 @@ public class BridgeCycleManager extends Thread {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(60000);
 
                 BridgeState nextState = bridge.getCurrentState().getNextState();
 
@@ -26,6 +26,14 @@ public class BridgeCycleManager extends Thread {
                 }
 
                 bridge.setCurrentState(nextState);
+
+                if (nextState == BridgeState.OPEN) {
+                    new Thread(() -> {
+                        try {
+                            bridge.startCrossingBoat();
+                        } catch (InterruptedException ignored) {}
+                    }, "BridgeCycleBoatCrossing").start();
+                }
 
                 if (nextState == BridgeState.CLOSED) {
                     bridge.setRoadsGateClosed(false);

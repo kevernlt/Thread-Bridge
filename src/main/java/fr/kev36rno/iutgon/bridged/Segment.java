@@ -6,6 +6,7 @@ public class Segment {
     private final int segmentId;
     private final Way way;
     private WheeledVehicle vehicleOccupyingSegment;
+    private WheeledVehicle emergencyLaneVehicle;
 
     public Segment(int segmentId, Way way) {
         this.segmentId = segmentId;
@@ -28,12 +29,36 @@ public class Segment {
         this.vehicleOccupyingSegment = vehicleOccupyingSegment;
     }
 
+    public WheeledVehicle getEmergencyLaneVehicle() {
+        return emergencyLaneVehicle;
+    }
+
+    public void setEmergencyLaneVehicle(WheeledVehicle emergencyLaneVehicle) {
+        this.emergencyLaneVehicle = emergencyLaneVehicle;
+    }
+
+    public boolean hasEmergencyLaneVehicle() {
+        return emergencyLaneVehicle != null;
+    }
+
     public String getStatusMessage() {
-        return this.vehicleOccupyingSegment == null ? "  FREE  " : "OCCUPIED";
+        return this.vehicleOccupyingSegment == null ? "     FREE     " :
+                this.vehicleOccupyingSegment.isEmergencyVehicle() ? "OCCUPIED [EM] " :
+                        this.vehicleOccupyingSegment.isOnEmergencyLane() ? "OCCUPIED [BAU] " :
+                "   OCCUPIED   ";
+    }
+
+    public String getEmergencyLaneStatusMessage() {
+        return hasEmergencyLaneVehicle() ? emergencyLaneVehicle.getClass().getSimpleName() : " FREE ";
     }
 
     @Override
     public int hashCode() {
         return segmentId + way.ordinal();
+    }
+
+    @Override
+    public String toString() {
+        return "S" + segmentId + "(" + way + ")";
     }
 }
