@@ -85,4 +85,64 @@ public class Bridge {
     public void boatForward(Boat boat){
 
     }
+    public void printCurrentState() {
+        clearOutput();
+        System.out.println("Current bridge state: " + state);
+
+        System.out.println("Cars segments:");
+
+        for (int i = 0; i < sizeBridge; i++) {
+            int oppositeIndex = sizeBridge - 1 - i;
+
+            // Lecture thread-safe des cases du tableau
+            Vehicle vWtoE = segmentWtoE.get(i);
+            Vehicle vEtoW = segmentEtoW.get(oppositeIndex);
+
+            String firstColor = resetColor();
+            String secondColor = resetColor();
+
+            String firstStatus = (vWtoE != null) ? "Car " + vWtoE.hashCode() : "Empty";
+            String secondStatus = (vEtoW != null) ? "Car " + vEtoW.hashCode() : "Empty";
+
+            if (vWtoE != null) {
+                firstColor = getRandomAnsiColorCodeFromStrings(String.valueOf(vWtoE.hashCode()));
+            }
+            if (vEtoW != null) {
+                secondColor = getRandomAnsiColorCodeFromStrings(String.valueOf(vEtoW.hashCode()));
+            }
+
+            System.out.println("  -> " +
+                    i +
+                    firstColor +
+                    " [" + firstStatus + "]        " +
+                    resetColor() +
+                    oppositeIndex +
+                    secondColor +
+                    "  [" + secondStatus + "]" +
+                    resetColor()
+            );
+        }
+
+        System.out.println("Vehicles at bridge entry:");
+        System.out.println("  -> WEST to EAST entry: " + vehicleWtoE.size() + " vehicle(s) waiting");
+        System.out.println("  -> EAST to WEST entry: " + vehicleEtoW.size() + " vehicle(s) waiting");
+        System.out.println("-----------------------------------");
+    }
+
+
+    private void clearOutput() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    private String resetColor() {
+        return "\u001B[0m";
+    }
+
+    private String getRandomAnsiColorCodeFromStrings(String seed) {
+        int hash = Math.abs(seed.hashCode());
+        int colorCode = 31 + (hash % 6);
+        return "\u001B[" + colorCode + "m";
+    }
+
 }
