@@ -23,9 +23,12 @@ public class Bridge {
     public Bridge() {
         this.segments = new ArrayList<>();
         this.currentState = BridgeState.CLOSED;
+
+        BridgeCycleManager bridgeCycleManager = new BridgeCycleManager(this);
+        bridgeCycleManager.start();
     }
 
-    public void setCurrentState(BridgeState currentState) {
+    public synchronized void setCurrentState(BridgeState currentState) {
         this.currentState = currentState;
     }
 
@@ -119,11 +122,8 @@ public class Bridge {
         return true;
     }
 
-    public synchronized void enterSegment(WheeledVehicle vehicle, Segment nextSegment) throws InterruptedException {
-        while (nextSegment.getVehicleOccupyingSegment() != null || currentState != BridgeState.CLOSED) {
-            wait();
-        }
-        nextSegment.setVehicleOccupyingSegment(vehicle);
+    public BridgeRules getBridgeRules() {
+        return bridgeRules;
     }
 
     public synchronized void leaveSegment(WheeledVehicle vehicle, Segment segment) {
@@ -149,31 +149,6 @@ public class Bridge {
 
     public HashMap<Way, PriorityQueue<Vehicle>> getVehicleAtBridgeEntry() {
         return vehicleAtBridgeEntry;
-    }
-
-    public synchronized Vehicle getNextVehicleWaitingAtEntry(Way way) {
-        PriorityQueue<Vehicle> oppositeQueue = vehicleAtBridgeEntry.get(way.getOppositeWay());
-        return (oppositeQueue != null) ? oppositeQueue.peek() : null;
-    }
-
-    public synchronized void waitForEntry(WheeledVehicle vehicle) throws InterruptedException {
-        if (!vehicle.getWay().isLogic(vehicle)) {
-            throw new IllegalVehicleWay("Vehicle type does not match the way.");
-        }
-
-        PriorityQueue<Vehicle> queue = vehicleAtBridgeEntry.get(vehicle.getWay());
-        Way myWay = vehicle.getWay();
-        Way oppositeWay = myWay.getOppositeWay();
-
-        while (shouldWaitToEnter(vehicle, queue, myWay, oppositeWay)) {
-            wait();
-        }
-
-        queue.poll();
-
-        if (vehicle.isBlockingOtherWay()) {
-            activeBlockingVehicle = vehicle;
-        }
     }
 
     private boolean shouldWaitToEnter(WheeledVehicle vehicle, PriorityQueue<Vehicle> queue, Way myWay, Way oppositeWay) {

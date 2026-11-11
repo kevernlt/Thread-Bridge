@@ -10,12 +10,11 @@ public enum BridgeState {
 
     /**
      * Returns the next state of the bridge based on its current state.
-     * @param currentState the current state of the bridge
      * @return the next state of the bridge
      */
-    public static BridgeState getNextState(BridgeState currentState) {
+    public BridgeState getNextState() {
         // "Closed" -> "Opening" -> "Open" -> "Closing" -> "Closed"
-        return switch (currentState) {
+        return switch (this) {
             case CLOSED -> OPENING;
             case OPENING -> OPEN;
             case OPEN -> CLOSING;
