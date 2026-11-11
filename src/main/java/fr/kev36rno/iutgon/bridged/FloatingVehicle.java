@@ -5,7 +5,7 @@ import fr.kev36rno.iutgon.bridged.enums.Way;
 
 public class FloatingVehicle extends Vehicle {
 
-    private Bridge bridge;
+    private final Bridge bridge;
     private volatile boolean exit = false;
 
     public FloatingVehicle(Way way,Bridge bridge) {
@@ -23,5 +23,6 @@ public class FloatingVehicle extends Vehicle {
     public void cross() throws InterruptedException {
         sleep(1000);
         exit=true;
+        bridge.setCrossingBoat(null);
     }
 }

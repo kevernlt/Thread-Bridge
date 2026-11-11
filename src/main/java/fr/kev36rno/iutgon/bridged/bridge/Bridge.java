@@ -22,8 +22,8 @@ public class Bridge {
     private final HashMap<Way, PriorityQueue<Vehicle>> vehicleAtBridgeEntry = new HashMap<>();
     private final Queue<FloatingVehicle> boatAtBridge = new PriorityQueue<>();
 
-    private FloatingVehicle crossingBoat;
-    private boolean boatAlert;
+    private FloatingVehicle crossingBoat = null;
+    private boolean boatAlert = false;
 
     public Bridge() {
         this.segments = new ArrayList<>();
@@ -229,8 +229,15 @@ public class Bridge {
 
     public void startCrossingBoat() throws InterruptedException {
         while(!boatAtBridge.isEmpty()){
-            crossingBoat= boatAtBridge.poll();
-            crossingBoat.cross();
+            if(crossingBoat==null){
+                crossingBoat= boatAtBridge.poll();
+                crossingBoat.cross();
+            }
         }
+        boatAlert=false;
+    }
+
+    public void setCrossingBoat(FloatingVehicle crossingBoat) {
+        this.crossingBoat = crossingBoat;
     }
 }
