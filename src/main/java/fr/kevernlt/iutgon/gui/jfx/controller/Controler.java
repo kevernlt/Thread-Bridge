@@ -125,6 +125,7 @@ public class Controler implements Initializable {
         }
         bridge.addSegment(segments.toArray(new Segment[0]));
 
+        /*
         // Add some initial vehicles
         bridge.addVehicle(new ExceptionalLoad(Way.CAR_RIGHT_TO_LEFT, bridge));
         bridge.addVehicle(new Car(Way.CAR_RIGHT_TO_LEFT, bridge));
@@ -134,8 +135,8 @@ public class Controler implements Initializable {
         // Add some initial boats
         bridge.addBoat(new Boat(Way.BOAT_NORTH, bridge));
         bridge.addBoat(new Boat(Way.BOAT_SOUTH, bridge));
-
-        startBackgroundGenerators();
+        */
+        //startBackgroundGenerators();
     }
 
     /**
