@@ -1,5 +1,6 @@
 package fr.kev36rno.iutgon.bridged.bridge;
 
+import fr.kev36rno.iutgon.bridged.FloatingVehicle;
 import fr.kev36rno.iutgon.bridged.Segment;
 import fr.kev36rno.iutgon.bridged.Vehicle;
 import fr.kev36rno.iutgon.bridged.WheeledVehicle;
@@ -19,6 +20,10 @@ public class Bridge {
     private WheeledVehicle activeBlockingVehicle = null;
 
     private final HashMap<Way, PriorityQueue<Vehicle>> vehicleAtBridgeEntry = new HashMap<>();
+    private final Queue<FloatingVehicle> boatAtBridge = new PriorityQueue<>();
+
+    private FloatingVehicle crossingBoat;
+    private boolean boatAlert;
 
     public Bridge() {
         this.segments = new ArrayList<>();
@@ -37,7 +42,7 @@ public class Bridge {
         this.segments.addAll(Arrays.asList(segments));
     }
 
-    public void addVehicle(Vehicle vehicle) {
+    public void addVehicle(WheeledVehicle vehicle) {
         vehicleAtBridgeEntry.computeIfAbsent(vehicle.getWay(), k -> new PriorityQueue<>()).add(vehicle);
         vehicle.start();
     }
@@ -214,5 +219,18 @@ public class Bridge {
         // Un véhicule qui occupe deux (ou plus) segments consécutifs en raison de sa longueur
         // doit pouvoir réserver tous ses segments initiaux simultanément avant d'avancer.
         return !this.bridgeRules.areFirstSegmentsFree(myWay, Math.max(1, vehicle.getSize()));
+    }
+
+    public void addBoat(FloatingVehicle boat){
+        if(boatAtBridge.isEmpty())boatAlert=true;
+        if(!boatAtBridge.contains(boat))boatAtBridge.add(boat);
+        boat.start();
+    }
+
+    public void startCrossingBoat() throws InterruptedException {
+        while(!boatAtBridge.isEmpty()){
+            crossingBoat= boatAtBridge.poll();
+            crossingBoat.cross();
+        }
     }
 }
