@@ -186,8 +186,6 @@ public class Bridge {
             return false;
         }
 
-        // Un véhicule qui occupe deux (ou plus) segments consécutifs en raison de sa longueur
-        // doit pouvoir réserver tous ses segments initiaux simultanément avant d'avancer.
         return !this.bridgeRules.areFirstSegmentsFree(myWay, Math.max(1, vehicle.getSize()));
     }
 }

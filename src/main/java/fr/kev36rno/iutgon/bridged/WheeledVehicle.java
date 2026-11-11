@@ -46,7 +46,7 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
                 blocks.add(path.subList(i, end));
             }
 
-            // 1. Entrée sur le pont : réservation simultanée des premiers segments requis
+            // taking [size] segments from the path
             List<Segment> currentBlock = blocks.get(0);
             bridge.enterBridge(this, currentBlock);
             synchronized (this) {
@@ -55,8 +55,7 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
             }
             Thread.sleep(1000);
 
-            // 2. Progression par blocs consécutifs :
-            // libération des segments qu'il quitte et réservation simultanée des suivants
+            // progress [size] segments per [size] segments
             for (int b = 1; b < blocks.size(); b++) {
                 List<Segment> nextBlock = blocks.get(b);
                 bridge.advanceToSegments(this, currentBlock, nextBlock);
@@ -68,9 +67,9 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
                 Thread.sleep(1000);
             }
 
-            // 3. Sortie complète du pont : libération des derniers segments
+            // bridge is now closed
             bridge.leaveBridge(this, currentBlock);
-            synchronized (this) {
+            synchronized (this) { // avoid race condition
                 occupied.clear();
             }
 
@@ -84,10 +83,6 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
                 }
             }
         }
-    }
-
-    public synchronized boolean hasClearedBridge() {
-        return occupied.isEmpty();
     }
 
     @Override
