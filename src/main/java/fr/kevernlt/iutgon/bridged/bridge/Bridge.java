@@ -21,16 +21,13 @@ public class Bridge {
     private WheeledVehicle suspendedBlockingVehicle = null;
     private boolean isRoadsGateClosed = false;
     private final HashMap<Way, PriorityQueue<Vehicle>> vehicleAtBridgeEntry = new HashMap<>();
-
-    // Bateaux (origin/boat)
     private final Queue<FloatingVehicle> boatAtBridge = new PriorityQueue<>();
-    private FloatingVehicle crossingBoat;
-    private boolean boatAlert;
 
-    // Véhicules prioritaires actifs (détectés et en transit sur le pont) par voie
+    private FloatingVehicle crossingBoat = null;
+    private boolean boatAlert = false;
+
     private final Map<Way, Set<WheeledVehicle>> activeEmergencyVehiclesByWay = new HashMap<>();
 
-    // Véhicules actuellement rangés sur la bande d'urgence par voie
     private final Map<Way, List<WheeledVehicle>> vehiclesOnEmergencyLane = new HashMap<>();
 
     public Bridge() {
@@ -414,5 +411,10 @@ public class Bridge {
                !this.bridgeRules.isWayCompletelyClear(Way.CAR_RIGHT_TO_LEFT)) {
             wait();
         }
+        boatAlert=false;
+    }
+
+    public void setCrossingBoat(FloatingVehicle crossingBoat) {
+        this.crossingBoat = crossingBoat;
     }
 }

@@ -1,6 +1,4 @@
-package fr.kev36rno.iutgon.bridged.enums;
-
-import fr.kev36rno.iutgon.bridged.orchestrator.OrchestatorThread;
+package fr.kevernlt.iutgon.bridged.enums;
 
 public enum OrchestratorPhase {
     PROCESS_SEGMENTS;
