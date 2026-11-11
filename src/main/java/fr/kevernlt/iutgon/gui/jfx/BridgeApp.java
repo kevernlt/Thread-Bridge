@@ -1,7 +1,7 @@
 package fr.kevernlt.iutgon.gui.jfx;
 
 import fr.kevernlt.iutgon.JfxLauncher;
-import fr.kevernlt.iutgon.bridged.controller.Controler;
+import fr.kevernlt.iutgon.gui.jfx.controller.Controler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

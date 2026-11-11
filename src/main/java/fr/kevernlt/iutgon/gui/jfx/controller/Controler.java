@@ -1,4 +1,4 @@
-package fr.kevernlt.iutgon.bridged.controller;
+package fr.kevernlt.iutgon.gui.jfx.controller;
 
 import fr.kevernlt.iutgon.bridged.FloatingVehicle;
 import fr.kevernlt.iutgon.bridged.Segment;
