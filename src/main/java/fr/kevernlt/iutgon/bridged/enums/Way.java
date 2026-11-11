@@ -1,8 +1,8 @@
-package fr.kev36rno.iutgon.bridged.enums;
+package fr.kevernlt.iutgon.bridged.enums;
 
-import fr.kev36rno.iutgon.bridged.FloatingVehicle;
-import fr.kev36rno.iutgon.bridged.Vehicle;
-import fr.kev36rno.iutgon.bridged.WheeledVehicle;
+import fr.kevernlt.iutgon.bridged.FloatingVehicle;
+import fr.kevernlt.iutgon.bridged.Vehicle;
+import fr.kevernlt.iutgon.bridged.WheeledVehicle;
 
 public enum Way {
     CAR_LEFT_TO_RIGHT,

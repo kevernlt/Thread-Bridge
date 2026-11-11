@@ -1,12 +1,12 @@
-package fr.kev36rno.iutgon.bridged.bridge;
+package fr.kevernlt.iutgon.bridged.bridge;
 
-import fr.kev36rno.iutgon.bridged.FloatingVehicle;
-import fr.kev36rno.iutgon.bridged.Segment;
-import fr.kev36rno.iutgon.bridged.Vehicle;
-import fr.kev36rno.iutgon.bridged.WheeledVehicle;
-import fr.kev36rno.iutgon.bridged.enums.BridgeState;
-import fr.kev36rno.iutgon.bridged.enums.Way;
-import fr.kev36rno.iutgon.bridged.exceptions.IllegalVehicleWay;
+import fr.kevernlt.iutgon.bridged.FloatingVehicle;
+import fr.kevernlt.iutgon.bridged.Segment;
+import fr.kevernlt.iutgon.bridged.Vehicle;
+import fr.kevernlt.iutgon.bridged.WheeledVehicle;
+import fr.kevernlt.iutgon.bridged.enums.BridgeState;
+import fr.kevernlt.iutgon.bridged.enums.Way;
+import fr.kevernlt.iutgon.bridged.exceptions.IllegalVehicleWay;
 
 import java.util.*;
 

@@ -1,8 +1,8 @@
-package fr.kev36rno.iutgon.bridged.objects;
+package fr.kevernlt.iutgon.bridged.objects;
 
-import fr.kev36rno.iutgon.bridged.bridge.Bridge;
-import fr.kev36rno.iutgon.bridged.WheeledVehicle;
-import fr.kev36rno.iutgon.bridged.enums.Way;
+import fr.kevernlt.iutgon.bridged.bridge.Bridge;
+import fr.kevernlt.iutgon.bridged.WheeledVehicle;
+import fr.kevernlt.iutgon.bridged.enums.Way;
 
 public class Truck extends WheeledVehicle {
     public Truck(Way way, Bridge bridge) {

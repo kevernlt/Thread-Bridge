@@ -1,7 +1,7 @@
-package fr.kev36rno.iutgon.bridged;
+package fr.kevernlt.iutgon.bridged;
 
-import fr.kev36rno.iutgon.bridged.bridge.Bridge;
-import fr.kev36rno.iutgon.bridged.enums.Way;
+import fr.kevernlt.iutgon.bridged.bridge.Bridge;
+import fr.kevernlt.iutgon.bridged.enums.Way;
 
 public class FloatingVehicle extends Vehicle {
 

@@ -1,8 +1,8 @@
-package fr.kev36rno.iutgon.bridged.bridge;
+package fr.kevernlt.iutgon.bridged.bridge;
 
-import fr.kev36rno.iutgon.bridged.Segment;
-import fr.kev36rno.iutgon.bridged.Vehicle;
-import fr.kev36rno.iutgon.bridged.enums.Way;
+import fr.kevernlt.iutgon.bridged.Segment;
+import fr.kevernlt.iutgon.bridged.Vehicle;
+import fr.kevernlt.iutgon.bridged.enums.Way;
 
 import java.util.Map;
 import java.util.PriorityQueue;

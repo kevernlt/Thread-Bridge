@@ -1,6 +1,6 @@
-package fr.kev36rno.iutgon.bridged;
+package fr.kevernlt.iutgon.bridged;
 
-import fr.kev36rno.iutgon.bridged.enums.Way;
+import fr.kevernlt.iutgon.bridged.enums.Way;
 
 public class Segment {
     private final int segmentId;

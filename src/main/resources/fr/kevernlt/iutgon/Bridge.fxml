@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Vehicle">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="About">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#068a29" height="375.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="90.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#068a29" height="375.0" layoutX="510.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="90.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="377.0" layoutX="90.0" layoutY="-1.0" stroke="BLACK" strokeType="INSIDE" width="421.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#5c5f61" height="200.0" layoutY="88.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="600.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbd29" height="15.0" layoutX="45.0" layoutY="181.0" stroke="BLACK" strokeType="INSIDE" width="121.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbd29" height="15.0" layoutX="250.0" layoutY="180.0" stroke="BLACK" strokeType="INSIDE" width="121.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#bfbd29" height="15.0" layoutX="451.0" layoutY="180.0" stroke="BLACK" strokeType="INSIDE" width="121.0" />
+         </children>
+      </Pane>
+   </center>
+</BorderPane>

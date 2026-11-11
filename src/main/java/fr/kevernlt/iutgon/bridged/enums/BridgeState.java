@@ -1,4 +1,4 @@
-package fr.kev36rno.iutgon.bridged.enums;
+package fr.kevernlt.iutgon.bridged.enums;
 
 // To "simplify" : this is the pov of a boat, if closed, cars can drive but boats cant
 // and for states closing, opening no one can move (or they will die???)

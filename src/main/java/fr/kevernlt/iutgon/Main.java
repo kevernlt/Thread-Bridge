@@ -1,6 +1,6 @@
-package fr.kev36rno.iutgon;
+package fr.kevernlt.iutgon;
 
-import fr.kev36rno.iutgon.bridged.orchestrator.OrchestatorThread;
+import fr.kevernlt.iutgon.bridged.orchestrator.OrchestatorThread;
 
 public class Main {
     static void main() {
