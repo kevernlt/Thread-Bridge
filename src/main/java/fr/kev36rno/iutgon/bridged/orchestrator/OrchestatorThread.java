@@ -37,7 +37,7 @@ public class OrchestatorThread extends Thread {
         }
     }
 
-    public void populateBridge() {
+    public void populateBridge() throws InterruptedException {
         /**
          * Lets imagine a 5 segments bridge
          * From top view :
@@ -76,6 +76,31 @@ public class OrchestatorThread extends Thread {
 
         Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(car1);
+
+        CarAdder carAdder = new CarAdder(bridge);
+        carAdder.start();
+    }
+
+    static class CarAdder extends Thread {
+        private final Bridge bridge;
+
+        CarAdder(Bridge bridge) {
+            this.bridge = bridge;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 20; i++) {
+                try {
+                    Thread.sleep(1000);
+
+                    Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
+                    bridge.addVehicle(car1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     static List<Segment> generateSegments(int n) {

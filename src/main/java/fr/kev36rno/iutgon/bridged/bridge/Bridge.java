@@ -17,7 +17,7 @@ public class Bridge {
     private final BridgeRules bridgeRules = new BridgeRules(this);
     private final BridgePrinter bridgePrinter = new BridgePrinter(this);
     private WheeledVehicle activeBlockingVehicle = null;
-
+    private boolean isRoadsGateClosed = false;
     private final HashMap<Way, PriorityQueue<Vehicle>> vehicleAtBridgeEntry = new HashMap<>();
 
     public Bridge() {
@@ -30,6 +30,7 @@ public class Bridge {
 
     public synchronized void setCurrentState(BridgeState currentState) {
         this.currentState = currentState;
+        notifyAll();
     }
 
     public BridgeState getCurrentState() {
@@ -122,27 +123,6 @@ public class Bridge {
         return true;
     }
 
-    public BridgeRules getBridgeRules() {
-        return bridgeRules;
-    }
-
-    public synchronized void leaveSegment(WheeledVehicle vehicle, Segment segment) {
-        if (segment != null && segment.getVehicleOccupyingSegment() == vehicle) {
-            segment.setVehicleOccupyingSegment(null);
-
-            // If i'm the blocking another vehicle, i can leave the bridge
-            if (vehicle.equals(activeBlockingVehicle)) {
-                boolean convoiStillOnBridge = getSegmentsForWay(vehicle.getWay()).stream()
-                        .anyMatch(s -> s.getVehicleOccupyingSegment() == vehicle);
-
-                if (!convoiStillOnBridge) {
-                    activeBlockingVehicle = null;
-                }
-            }
-            notifyAll();
-        }
-    }
-
     public List<Segment> getSegmentsForWay(Way way) {
         return segments.stream().filter(segment -> segment.getWay() == way).toList();
     }
@@ -156,8 +136,8 @@ public class Bridge {
             return true;
         }
 
-        // Bridge is not closed, vehicle will fall in water
-        if (currentState != BridgeState.CLOSED) {
+        // Bridge is not closed or roads gate is closed to prepare opening
+        if (currentState != BridgeState.CLOSED || isRoadsGateClosed) {
             return true;
         }
 
@@ -187,5 +167,21 @@ public class Bridge {
         }
 
         return !this.bridgeRules.areFirstSegmentsFree(myWay, Math.max(1, vehicle.getSize()));
+    }
+
+    public boolean isRoadsGateClosed() {
+        return isRoadsGateClosed;
+    }
+
+    public synchronized void setRoadsGateClosed(boolean isRoadsGateClosed) {
+        this.isRoadsGateClosed = isRoadsGateClosed;
+        notifyAll();
+    }
+
+    public synchronized void waitUntilRoadsClear() throws InterruptedException {
+        while (!this.bridgeRules.isWayCompletelyClear(Way.CAR_LEFT_TO_RIGHT) ||
+               !this.bridgeRules.isWayCompletelyClear(Way.CAR_RIGHT_TO_LEFT)) {
+            wait();
+        }
     }
 }

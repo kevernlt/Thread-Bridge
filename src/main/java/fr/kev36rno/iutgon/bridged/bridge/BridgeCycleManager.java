@@ -1,6 +1,6 @@
 package fr.kev36rno.iutgon.bridged.bridge;
 
-import fr.kev36rno.iutgon.bridged.enums.Way;
+import fr.kev36rno.iutgon.bridged.enums.BridgeState;
 
 public class BridgeCycleManager extends Thread {
     private final Bridge bridge;
@@ -11,17 +11,30 @@ public class BridgeCycleManager extends Thread {
 
     @Override
     public void run() {
-        while (this.isAlive()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(5000);
-                // consignee says "toutes les minutes"
-                while (!bridge.getBridgeRules().isWayCompletelyClear(Way.CAR_LEFT_TO_RIGHT) || !bridge.getBridgeRules().isWayCompletelyClear(Way.CAR_RIGHT_TO_LEFT)) {
-                    wait();
+
+                BridgeState nextState = bridge.getCurrentState().getNextState();
+
+                if (bridge.getCurrentState() == BridgeState.CLOSED && nextState == BridgeState.OPENING) {
+                    bridge.setRoadsGateClosed(true);
+                    System.out.println("BridgeCycleManager: Roads gate closed, waiting for bridge to be clear...");
+
+                    bridge.waitUntilRoadsClear();
+                    System.out.println("BridgeCycleManager: Bridge is clear, opening...");
                 }
-                bridge.setCurrentState(bridge.getCurrentState().getNextState());
+
+                bridge.setCurrentState(nextState);
+
+                if (nextState == BridgeState.CLOSED) {
+                    bridge.setRoadsGateClosed(false);
+                    System.out.println("BridgeCycleManager: Bridge closed, roads gate opened.");
+                }
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                interrupt();
+                break;
             }
         }
     }

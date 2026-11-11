@@ -17,7 +17,7 @@ public class BridgePrinter {
 
     public void printCurrentState() {
         clearOutput();
-        System.out.println("Current bridge state: " + bridge.getCurrentState());
+        System.out.println("Current bridge state: " + bridge.getCurrentState() + " | Roads gate: " + (bridge.isRoadsGateClosed() ? "CLOSED" : "OPEN"));
 
         System.out.println("Cars segments:");
 
