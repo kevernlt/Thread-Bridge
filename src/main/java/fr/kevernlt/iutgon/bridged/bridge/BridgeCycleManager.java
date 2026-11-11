@@ -1,46 +1,80 @@
-package fr.kev36rno.iutgon.bridged.bridge;
+package fr.kevernlt.iutgon.bridged.bridge;
 
-import fr.kev36rno.iutgon.bridged.enums.BridgeState;
+import fr.kevernlt.iutgon.bridged.enums.BridgeState;
 
+/**
+ * Thread managing the 60-second automatic cycle of the movable bridge.
+ * The bridge stays closed for road traffic, closes the road gates,
+ * waits for vehicles to exit, opens for boats until all have passed,
+ * lowers the bridge deck, and reopens the road gates.
+ */
 public class BridgeCycleManager extends Thread {
     private final Bridge bridge;
+    private volatile boolean immediateOpenRequested = false;
 
+    /**
+     * Creates the cycle manager thread.
+     *
+     * @param bridge the bridge reference
+     */
     public BridgeCycleManager(Bridge bridge) {
+        super("BridgeCycleManager");
         this.bridge = bridge;
     }
 
+    /**
+     * Interrupts the closed sleep to force an immediate bridge opening.
+     */
+    public void triggerImmediateOpening() {
+        this.immediateOpenRequested = true;
+        this.interrupt();
+    }
+
+    /**
+     * Main cycle execution loop.
+     */
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(60000);
-
-                BridgeState nextState = bridge.getCurrentState().getNextState();
-
-                if (bridge.getCurrentState() == BridgeState.CLOSED && nextState == BridgeState.OPENING) {
-                    bridge.setRoadsGateClosed(true);
-                    System.out.println("BridgeCycleManager: Roads gate closed, waiting for bridge to be clear...");
-
-                    bridge.waitUntilRoadsClear();
-                    System.out.println("BridgeCycleManager: Bridge is clear, opening...");
+                // Bridge remains closed for road vehicles
+                long sleepTime = BridgeState.CLOSED.getDelay();
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < sleepTime && !immediateOpenRequested) {
+                    long remaining = sleepTime - (System.currentTimeMillis() - start);
+                    Thread.sleep(Math.min(remaining, 500));
                 }
+                immediateOpenRequested = false;
 
-                bridge.setCurrentState(nextState);
+                // Close road gates so no new normal vehicles can enter
+                bridge.setRoadsGateClosed(true);
 
-                if (nextState == BridgeState.OPEN) {
-                    new Thread(() -> {
-                        try {
-                            bridge.startCrossingBoat();
-                        } catch (InterruptedException ignored) {}
-                    }, "BridgeCycleBoatCrossing").start();
-                }
+                // Wait for all vehicles currently on the bridge to exit
+                bridge.waitUntilRoadsClear();
 
-                if (nextState == BridgeState.CLOSED) {
-                    bridge.setRoadsGateClosed(false);
-                    System.out.println("BridgeCycleManager: Bridge closed, roads gate opened.");
-                }
+                // Raise the bridge deck
+                bridge.setCurrentState(BridgeState.OPENING);
+                Thread.sleep(BridgeState.OPENING.getDelay());
+
+                // Bridge is fully open: maritime navigation authorized
+                bridge.setCurrentState(BridgeState.OPEN);
+
+                // Wait until all waiting and crossing boats have passed
+                bridge.waitUntilWaterwayClear();
+
+                // Lower the bridge deck
+                bridge.setCurrentState(BridgeState.CLOSING);
+                Thread.sleep(BridgeState.CLOSING.getDelay());
+
+                // Bridge is fully closed: reopen road gates for vehicles
+                bridge.setCurrentState(BridgeState.CLOSED);
+                bridge.setRoadsGateClosed(false);
 
             } catch (InterruptedException e) {
+                if (immediateOpenRequested) {
+                    Thread.interrupted();
+                    continue;
+                }
                 interrupt();
                 break;
             }

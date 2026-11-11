@@ -35,7 +35,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>fr.kevernlt.iutgon.BridgeApp</mainClass>
+                    <mainClass>fr.kevernlt.iutgon.gui.jfx.BridgeApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>

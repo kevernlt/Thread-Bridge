@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="1180.0" prefHeight="700.0"
+            style="-fx-background-color: #0f172a;">
+    <fx:define>
+        <ToggleGroup fx:id="roadWayGroup" />
+        <ToggleGroup fx:id="boatWayGroup" />
+    </fx:define>
+
+    <top>
+        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #000000; -fx-padding: 10 16; -fx-border-color: #494949; -fx-border-width: 0 0 1 0;">
+            <Label fx:id="lblState" text="Bridge : Closed" style="-fx-font-size: 13px; -fx-text-fill: #34d399; -fx-font-weight: bold;" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="lblGates" text="Gates : Open" style="-fx-font-size: 13px; -fx-text-fill: #38bdf8;" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="lblTimer" text="Next lift : 60s" style="-fx-font-size: 13px; -fx-text-fill: #cbd5e1;" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="lblWaterway" text="Boats waiting : 0" style="-fx-font-size: 13px; -fx-text-fill: #94a3b8;" />
+        </HBox>
+    </top>
+
+    <center>
+        <StackPane fx:id="canvasContainer" style="-fx-background-color: #2e2e2e; -fx-padding: 6;" />
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #000000; -fx-padding: 10 16; -fx-border-color: #494949; -fx-border-width: 0 0 1 0;">
+            <Label text="Road :" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+            <RadioButton fx:id="rbLeftToRight" text="Left -> Right" toggleGroup="$roadWayGroup" selected="true"
+                         style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px; -fx-cursor: hand;" />
+            <RadioButton fx:id="rbRightToLeft" text="Right -> Left" toggleGroup="$roadWayGroup"
+                         style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px; -fx-cursor: hand;" />
+
+            <Button fx:id="btnCar" text="+ Car" style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+            <Button fx:id="btnTruck" text="+ Truck" style="-fx-background-color: #d97706; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+            <Button fx:id="btnConvoi" text="+ Convoy" style="-fx-background-color: #9333ea; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+            <Button fx:id="btnSamu" text="+ SAMU" style="-fx-background-color: #dc2626; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+
+            <Separator orientation="VERTICAL" />
+
+            <Label text="River :" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+            <RadioButton fx:id="rbNorthToSouth" text="North -> South" toggleGroup="$boatWayGroup" selected="true"
+                         style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px; -fx-cursor: hand;" />
+            <RadioButton fx:id="rbSouthToNorth" text="South -> North" toggleGroup="$boatWayGroup"
+                         style="-fx-text-fill: #cbd5e1; -fx-font-size: 11px; -fx-cursor: hand;" />
+            <Button fx:id="btnBoat" text="+ Boat" style="-fx-background-color: #0284c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Button fx:id="btnForceOpen" text="Open the bridge" style="-fx-background-color: #e11d48; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11px; -fx-background-radius: 4; -fx-cursor: hand;" />
+        </HBox>
+    </bottom>
+</BorderPane>
