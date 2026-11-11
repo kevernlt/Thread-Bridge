@@ -6,6 +6,7 @@ import fr.kev36rno.iutgon.bridged.enums.OrchestratorPhase;
 import fr.kev36rno.iutgon.bridged.enums.Way;
 import fr.kev36rno.iutgon.bridged.objects.Car;
 import fr.kev36rno.iutgon.bridged.objects.ExceptionalLoad;
+import fr.kev36rno.iutgon.bridged.objects.Truck;
 
 public class OrchestatorThread extends Thread {
 
@@ -81,6 +82,9 @@ public class OrchestatorThread extends Thread {
 
         Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(car1);
+
+        Truck truck1 = new Truck(Way.CAR_LEFT_TO_RIGHT, bridge);
+        bridge.addVehicle(truck1);
 
 
 

@@ -22,6 +22,10 @@ public class BridgePrinter {
         System.out.println("Cars segments:");
 
         int totalSegments = bridge.getSegmentsForWay(Way.CAR_LEFT_TO_RIGHT).size();
+        boolean isLeftToRightLocked = bridge.getSegmentsForWay(Way.CAR_LEFT_TO_RIGHT).stream().anyMatch(segment -> segment.getVehicleOccupyingSegment() != null && segment.getVehicleOccupyingSegment().isBlockingOtherWay());
+        boolean isRightToLeftLocked = bridge.getSegmentsForWay(Way.CAR_RIGHT_TO_LEFT).stream().anyMatch(segment -> segment.getVehicleOccupyingSegment() != null && segment.getVehicleOccupyingSegment().isBlockingOtherWay());
+        System.out.println("  ->      " + (isRightToLeftLocked ? "LOCKED" : "OPEN") + "                 " + (isLeftToRightLocked ? "LOCKED" : "OPEN"));
+
         for (Segment segment : bridge.getSegmentsForWay(Way.CAR_LEFT_TO_RIGHT)) {
             Segment oppositeSegment = bridge.getSegmentsForWay(segment.getWay().getOppositeWay()).get(totalSegments - segment.getSegmentId());
 
@@ -66,7 +70,9 @@ public class BridgePrinter {
         return "\u001B[0m";
     }
 
-    String getRandomAnsiColorCodeFromStrings(String seed) {
-        return "\033[38;5;" + (seed.hashCode() % 200) + "m";
+    private String getRandomAnsiColorCodeFromStrings(String seed) {
+        int hash = Math.abs(seed.hashCode());
+        int colorCode = 31 + (hash % 6);
+        return "\u001B[" + colorCode + "m";
     }
 }
