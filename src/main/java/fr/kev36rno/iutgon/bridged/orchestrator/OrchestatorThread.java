@@ -8,6 +8,9 @@ import fr.kev36rno.iutgon.bridged.objects.Car;
 import fr.kev36rno.iutgon.bridged.objects.ExceptionalLoad;
 import fr.kev36rno.iutgon.bridged.objects.Truck;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OrchestatorThread extends Thread {
 
     private Bridge bridge = new Bridge();
@@ -53,19 +56,7 @@ public class OrchestatorThread extends Thread {
          * -----+                               +-----*
          */
 
-        Segment segment_gd_1 = new Segment(1, Way.CAR_LEFT_TO_RIGHT);
-        Segment segment_gd_2 = new Segment(2, Way.CAR_LEFT_TO_RIGHT);
-        Segment segment_gd_3 = new Segment(3, Way.CAR_LEFT_TO_RIGHT);
-        Segment segment_gd_4 = new Segment(4, Way.CAR_LEFT_TO_RIGHT);
-        Segment segment_gd_5 = new Segment(5, Way.CAR_LEFT_TO_RIGHT);
-        bridge.addSegment(segment_gd_1, segment_gd_2, segment_gd_3, segment_gd_4, segment_gd_5);
-
-        Segment segment_dg_1 = new Segment(1, Way.CAR_RIGHT_TO_LEFT);
-        Segment segment_dg_2 = new Segment(2, Way.CAR_RIGHT_TO_LEFT);
-        Segment segment_dg_3 = new Segment(3, Way.CAR_RIGHT_TO_LEFT);
-        Segment segment_dg_4 = new Segment(4, Way.CAR_RIGHT_TO_LEFT);
-        Segment segment_dg_5 = new Segment(5, Way.CAR_RIGHT_TO_LEFT);
-        bridge.addSegment(segment_dg_1, segment_dg_2, segment_dg_3, segment_dg_4, segment_dg_5);
+        bridge.addSegment(generateSegments(10).toArray(new Segment[0]));
 
         /**
          * Pour la démo
@@ -80,13 +71,22 @@ public class OrchestatorThread extends Thread {
         Car car2 = new Car(Way.CAR_RIGHT_TO_LEFT, bridge);
         bridge.addVehicle(car2);
 
-        Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
-        bridge.addVehicle(car1);
-
         Truck truck1 = new Truck(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(truck1);
 
+        Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
+        bridge.addVehicle(car1);
+    }
 
+    static List<Segment> generateSegments(int n) {
+        List<Segment> segments = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            segments.add(new Segment(i, Way.CAR_LEFT_TO_RIGHT));
+        }
 
+        for (int i = n; i >= 1; i--) {
+            segments.add(new Segment(i, Way.CAR_RIGHT_TO_LEFT));
+        }
+        return segments;
     }
 }

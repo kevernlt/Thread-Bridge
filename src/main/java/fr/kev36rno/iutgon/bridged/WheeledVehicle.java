@@ -4,13 +4,14 @@ import fr.kev36rno.iutgon.bridged.bridge.Bridge;
 import fr.kev36rno.iutgon.bridged.enums.Way;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle> {
     private Bridge bridge;
 
-    private Deque<Segment> occupied = new ArrayDeque<>();
+    private final Deque<Segment> occupied = new ArrayDeque<>();
 
     // size in platforms: in consignee it say "un camion fait 2 platforme" and "une voiture fait une platforme"
     public WheeledVehicle(Way way, Bridge bridge) {
@@ -19,7 +20,7 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
     }
 
     public int getSize() {
-        return 0;
+        return 1;
     }
 
     public boolean isBlockingOtherWay() {
@@ -33,42 +34,55 @@ public class WheeledVehicle extends Vehicle implements Comparable<WheeledVehicle
     @Override
     public void run() {
         try {
-            // call synchronized method to avoid entering the bridge
-            // if one the defined rules is not ok
-            bridge.waitForEntry(this);
-
             List<Segment> path = bridge.getSegmentsForWay(getWay());
+            if (path.isEmpty()) {
+                return;
+            }
 
+            int step = Math.max(1, this.getSize());
+            List<List<Segment>> blocks = new ArrayList<>();
+            for (int i = 0; i < path.size(); i += step) {
+                int end = Math.min(i + step, path.size());
+                blocks.add(path.subList(i, end));
+            }
 
-            // we let the vehicle enter the first segment and going through the rest of the path
-            for (Segment nextSegment : path) {
-                bridge.enterSegment(this, nextSegment);
-                occupied.addLast(nextSegment);
+            // 1. Entrée sur le pont : réservation simultanée des premiers segments requis
+            List<Segment> currentBlock = blocks.get(0);
+            bridge.enterBridge(this, currentBlock);
+            synchronized (this) {
+                occupied.clear();
+                occupied.addAll(currentBlock);
+            }
+            Thread.sleep(1000);
 
-                // fill the segments behind depending of size
-                if(occupied.size() > this.getSize()) {
-                    Segment segmentToLeave = occupied.removeFirst();
-                    bridge.leaveSegment(this, segmentToLeave);
+            // 2. Progression par blocs consécutifs :
+            // libération des segments qu'il quitte et réservation simultanée des suivants
+            for (int b = 1; b < blocks.size(); b++) {
+                List<Segment> nextBlock = blocks.get(b);
+                bridge.advanceToSegments(this, currentBlock, nextBlock);
+                synchronized (this) {
+                    occupied.clear();
+                    occupied.addAll(nextBlock);
                 }
-
+                currentBlock = nextBlock;
                 Thread.sleep(1000);
             }
 
-            // at this state, the vehicle is in the last segment of the path
-            // so we have [size] segements behind
-            while (!occupied.isEmpty()) {
-                Segment segmentToLeave = occupied.removeFirst();
-                bridge.leaveSegment(this, segmentToLeave);
-
-                if(!occupied.isEmpty()) {
-                    // not that "loop-busy" as idea can say but if this sleep is not here
-                    // the vehicle will leave the bridge in a single tick
-                    Thread.sleep(1000);
-                }
+            // 3. Sortie complète du pont : libération des derniers segments
+            bridge.leaveBridge(this, currentBlock);
+            synchronized (this) {
+                occupied.clear();
             }
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } finally {
+            synchronized (this) {
+                if (!occupied.isEmpty()) {
+                    bridge.leaveBridge(this, new ArrayList<>(occupied));
+                    occupied.clear();
+                }
+            }
         }
     }
 

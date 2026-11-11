@@ -46,6 +46,79 @@ public class Bridge {
         return bridgePrinter;
     }
 
+    public synchronized void enterBridge(WheeledVehicle vehicle, List<Segment> initialSegments) throws InterruptedException {
+        if (!vehicle.getWay().isLogic(vehicle)) {
+            throw new IllegalVehicleWay("Vehicle type does not match the way.");
+        }
+
+        PriorityQueue<Vehicle> queue = vehicleAtBridgeEntry.get(vehicle.getWay());
+        Way myWay = vehicle.getWay();
+        Way oppositeWay = myWay.getOppositeWay();
+
+        while (shouldWaitToEnter(vehicle, queue, myWay, oppositeWay)) {
+            wait();
+        }
+
+        queue.poll();
+
+        if (vehicle.isBlockingOtherWay()) {
+            activeBlockingVehicle = vehicle;
+        }
+
+        for (Segment segment : initialSegments) {
+            segment.setVehicleOccupyingSegment(vehicle);
+        }
+
+        notifyAll();
+    }
+
+    public synchronized void advanceToSegments(WheeledVehicle vehicle, List<Segment> currentBlock, List<Segment> nextBlock) throws InterruptedException {
+        while (!areSegmentsFree(nextBlock, vehicle) || currentState != BridgeState.CLOSED) {
+            wait();
+        }
+
+        for (Segment segment : currentBlock) {
+            if (segment.getVehicleOccupyingSegment() == vehicle) {
+                segment.setVehicleOccupyingSegment(null);
+            }
+        }
+
+        for (Segment segment : nextBlock) {
+            segment.setVehicleOccupyingSegment(vehicle);
+        }
+
+        notifyAll();
+    }
+
+    public synchronized void leaveBridge(WheeledVehicle vehicle, List<Segment> lastBlock) {
+        for (Segment segment : lastBlock) {
+            if (segment != null && segment.getVehicleOccupyingSegment() == vehicle) {
+                segment.setVehicleOccupyingSegment(null);
+            }
+        }
+
+        if (vehicle.equals(activeBlockingVehicle)) {
+            boolean convoiStillOnBridge = getSegmentsForWay(vehicle.getWay()).stream()
+                    .anyMatch(s -> s.getVehicleOccupyingSegment() == vehicle);
+
+            if (!convoiStillOnBridge) {
+                activeBlockingVehicle = null;
+            }
+        }
+
+        notifyAll();
+    }
+
+    public synchronized boolean areSegmentsFree(List<Segment> segments, WheeledVehicle vehicle) {
+        for (Segment segment : segments) {
+            WheeledVehicle occupying = segment.getVehicleOccupyingSegment();
+            if (occupying != null && occupying != vehicle) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public synchronized void enterSegment(WheeledVehicle vehicle, Segment nextSegment) throws InterruptedException {
         while (nextSegment.getVehicleOccupyingSegment() != null || currentState != BridgeState.CLOSED) {
             wait();
@@ -138,7 +211,8 @@ public class Bridge {
             return false;
         }
 
-        Segment firstSegment = getSegmentsForWay(myWay).getFirst();
-        return firstSegment.getVehicleOccupyingSegment() != null;
+        // Un véhicule qui occupe deux (ou plus) segments consécutifs en raison de sa longueur
+        // doit pouvoir réserver tous ses segments initiaux simultanément avant d'avancer.
+        return !this.bridgeRules.areFirstSegmentsFree(myWay, Math.max(1, vehicle.getSize()));
     }
 }
