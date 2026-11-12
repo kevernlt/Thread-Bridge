@@ -234,7 +234,13 @@ public class Controler implements Initializable {
                 if (lblTimer != null) {
                     if (state == BridgeState.CLOSED) {
                         long remaining = Math.max(0, (60000 - elapsed) / 1000);
-                        lblTimer.setText("Prochaine levée : " + remaining + "s");
+                        if (remaining > 0) {
+                            lblTimer.setText("Prochaine levée : " + remaining + "s");
+                        } else if (bridge.getWaitingBoatsCount() == 0) {
+                            lblTimer.setText("Prochaine levée : en attente de bateau");
+                        } else {
+                            lblTimer.setText("Prochaine levée : imminente");
+                        }
                     } else if (state == BridgeState.OPEN) {
                         lblTimer.setText("Ouvert depuis : " + (elapsed / 1000) + "s");
                     } else {

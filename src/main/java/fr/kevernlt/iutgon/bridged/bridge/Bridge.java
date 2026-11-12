@@ -96,9 +96,10 @@ public class Bridge {
 
     /**
      * Forces immediate bridge opening (useful for UI manual control).
+     * Opens only if the bridge is currently closed and at least one boat is waiting to pass.
      */
     public synchronized void triggerImmediateOpening() {
-        if (currentState == BridgeState.CLOSED) {
+        if (currentState == BridgeState.CLOSED && hasWaitingBoats()) {
             bridgeCycleManager.triggerImmediateOpening();
         }
     }
@@ -574,6 +575,15 @@ public class Bridge {
      */
     public synchronized List<FloatingVehicle> getBoatsWaiting() {
         return new ArrayList<>(boatAtBridge);
+    }
+
+    /**
+     * Checks if there are boats currently waiting to cross the bridge.
+     *
+     * @return true if at least one boat is waiting
+     */
+    public synchronized boolean hasWaitingBoats() {
+        return !boatAtBridge.isEmpty();
     }
 
     /**

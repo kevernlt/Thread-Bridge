@@ -4,9 +4,10 @@ import fr.kevernlt.iutgon.bridged.enums.BridgeState;
 
 /**
  * Thread managing the 60-second automatic cycle of the movable bridge.
- * The bridge stays closed for road traffic, closes the road gates,
- * waits for vehicles to exit, opens for boats until all have passed,
- * lowers the bridge deck, and reopens the road gates.
+ * The bridge stays closed for road traffic for at least 60 seconds.
+ * It will not open if there is no boat waiting to pass.
+ * Once a boat is waiting, it closes the road gates, waits for vehicles to exit,
+ * opens for boats until all have passed, lowers the bridge deck, and reopens the road gates.
  */
 public class BridgeCycleManager extends Thread {
     private final Bridge bridge;
@@ -27,6 +28,9 @@ public class BridgeCycleManager extends Thread {
      */
     public void triggerImmediateOpening() {
         this.immediateOpenRequested = true;
+        synchronized (bridge) {
+            bridge.notifyAll();
+        }
         this.interrupt();
     }
 
@@ -37,13 +41,37 @@ public class BridgeCycleManager extends Thread {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             try {
-                // Bridge remains closed for road vehicles
+                // Bridge remains closed for road vehicles for at least 60 seconds
                 long sleepTime = BridgeState.CLOSED.getDelay();
                 long start = System.currentTimeMillis();
                 while (System.currentTimeMillis() - start < sleepTime && !immediateOpenRequested) {
                     long remaining = sleepTime - (System.currentTimeMillis() - start);
-                    Thread.sleep(Math.min(remaining, 500));
+                    try {
+                        Thread.sleep(Math.min(remaining, 500));
+                    } catch (InterruptedException e) {
+                        if (immediateOpenRequested) {
+                            Thread.interrupted();
+                            break;
+                        }
+                        throw e;
+                    }
                 }
+
+                // Bridge must NOT open if there is no boat to pass
+                synchronized (bridge) {
+                    while (!bridge.hasWaitingBoats()) {
+                        try {
+                            bridge.wait();
+                        } catch (InterruptedException e) {
+                            if (immediateOpenRequested) {
+                                Thread.interrupted();
+                                continue;
+                            }
+                            throw e;
+                        }
+                    }
+                }
+
                 immediateOpenRequested = false;
 
                 // Close road gates so no new normal vehicles can enter
@@ -71,10 +99,6 @@ public class BridgeCycleManager extends Thread {
                 bridge.setRoadsGateClosed(false);
 
             } catch (InterruptedException e) {
-                if (immediateOpenRequested) {
-                    Thread.interrupted();
-                    continue;
-                }
                 interrupt();
                 break;
             }

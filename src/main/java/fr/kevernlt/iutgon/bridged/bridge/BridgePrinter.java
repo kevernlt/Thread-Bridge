@@ -77,13 +77,19 @@ public class BridgePrinter {
         String timerStr;
         if (state == BridgeState.CLOSED) {
             long remaining = Math.max(0, (BridgeState.CLOSED.getDelay() - elapsedMs) / 1000);
-            timerStr = String.format("Prochaine ouverture dans %2ds (Cycle d'une minute)", remaining);
+            if (remaining > 0) {
+                timerStr = String.format("Prochaine ouverture dans %2ds (Cycle d'une minute)", remaining);
+            } else if (waitingBoats.isEmpty()) {
+                timerStr = "Pret pour ouverture (En attente d'un bateau)";
+            } else {
+                timerStr = "Ouverture imminente...";
+            }
         } else if (state == BridgeState.OPEN) {
             timerStr = String.format("Ouvert depuis %2ds (Se referme des qu'il n'y a plus de bateaux)", elapsedSec);
         } else if (state == BridgeState.OPENING) {
-            timerStr = "Manœuvre mecanique de levee en cours...";
+            timerStr = "Manoeuvre mecanique de levee en cours...";
         } else {
-            timerStr = "Manœuvre mecanique d'abaissement en cours...";
+            timerStr = "Manoeuvre mecanique d'abaissement en cours...";
         }
         System.out.println("  Minuteur / Cycle   : " + timerStr);
 
