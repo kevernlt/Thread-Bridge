@@ -134,8 +134,6 @@ public class Controler implements Initializable {
         // Add some initial boats
         bridge.addBoat(new Boat(Way.BOAT_NORTH, bridge));
         bridge.addBoat(new Boat(Way.BOAT_SOUTH, bridge));
-
-        startBackgroundGenerators();
     }
 
     /**
@@ -259,40 +257,7 @@ public class Controler implements Initializable {
     /**
      * Starts background threads that periodically inject cars and boats for demonstration.
      */
-    private void startBackgroundGenerators() {
-        Thread carGen = new Thread(() -> {
-            for (int i = 0; i < 50; i++) {
-                try {
-                    Thread.sleep(4000 + (int) (Math.random() * 2000));
-                    if (i == 4) {
-                        bridge.addVehicle(new EmergencyCar(Way.CAR_LEFT_TO_RIGHT, bridge));
-                    } else if (i % 3 == 0) {
-                        bridge.addVehicle(new Car(Way.CAR_RIGHT_TO_LEFT, bridge));
-                    } else {
-                        bridge.addVehicle(new Car(Way.CAR_LEFT_TO_RIGHT, bridge));
-                    }
-                } catch (InterruptedException ignored) {
-                    break;
-                }
-            }
-        }, "JavaFX-CarGenerator");
-        carGen.setDaemon(true);
-        carGen.start();
 
-        Thread boatGen = new Thread(() -> {
-            for (int i = 0; i < 20; i++) {
-                try {
-                    Thread.sleep(12000 + (int) (Math.random() * 6000));
-                    Way way = (i % 2 == 0) ? Way.BOAT_NORTH : Way.BOAT_SOUTH;
-                    bridge.addBoat(new Boat(way, bridge));
-                } catch (InterruptedException ignored) {
-                    break;
-                }
-            }
-        }, "JavaFX-BoatGenerator");
-        boatGen.setDaemon(true);
-        boatGen.start();
-    }
 
     /**
      * Stops the canvas animation timer.

@@ -81,76 +81,11 @@ public class OrchestatorThread extends Thread {
         Car car1 = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
         bridge.addVehicle(car1);
 
-        CarAdder carAdder = new CarAdder(bridge);
-        carAdder.setName("CarAdder");
-        carAdder.start();
-
         Boat boat1 = new Boat(Way.BOAT_NORTH, bridge);
         bridge.addBoat(boat1);
 
         Boat boat2 = new Boat(Way.BOAT_SOUTH, bridge);
         bridge.addBoat(boat2);
-
-        BoatAdder boatAdder = new BoatAdder(bridge);
-        boatAdder.setName("BoatAdder");
-        boatAdder.start();
-    }
-
-    /**
-     * Background generator that adds cars and emergency vehicles at intervals.
-     */
-    static class CarAdder extends Thread {
-        private final Bridge bridge;
-
-        CarAdder(Bridge bridge) {
-            this.bridge = bridge;
-        }
-
-        @Override
-        public void run() {
-            for (int i = 0; i < 40; i++) {
-                try {
-                    Thread.sleep(4000 + Math.max(1, (int) (Math.random() * 2000)));
-                    if (i == 4) {
-                        EmergencyCar emergencyCar = new EmergencyCar(Way.CAR_LEFT_TO_RIGHT, bridge);
-                        bridge.addVehicle(emergencyCar);
-                    } else if (i % 3 == 0) {
-                        Car car = new Car(Way.CAR_RIGHT_TO_LEFT, bridge);
-                        bridge.addVehicle(car);
-                    } else {
-                        Car car = new Car(Way.CAR_LEFT_TO_RIGHT, bridge);
-                        bridge.addVehicle(car);
-                    }
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Background generator that adds boats at intervals.
-     */
-    static class BoatAdder extends Thread {
-        private final Bridge bridge;
-
-        BoatAdder(Bridge bridge) {
-            this.bridge = bridge;
-        }
-
-        @Override
-        public void run() {
-            for (int i = 0; i < 20; i++) {
-                try {
-                    Thread.sleep(12000 + (int) (Math.random() * 6000));
-                    Way way = (i % 2 == 0) ? Way.BOAT_NORTH : Way.BOAT_SOUTH;
-                    Boat boat = new Boat(way, bridge);
-                    bridge.addBoat(boat);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        }
     }
 
     /**
