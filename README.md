@@ -1,6 +1,9 @@
 # Thread-Bridge
-Final project in R3.05 about thread in Java
 
-![doc/img.png](doc/img.png)
+Ce projet se déroule dans le cadre du projet de R3.05
 
-Some readme...
+La vidéo est disponible ici : https://www.youtube.com/watch?v=iOPb_i86fIQ
+
+Voici le schéma UML
+
+![UML](doc/uml.png)
